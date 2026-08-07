@@ -1,19 +1,51 @@
 import { useState } from "react";
 import { useReveal } from "../hooks/useReveal";
-import email from "../assets/email.png";
+import emailIcon from "../assets/email.png";
 import mobile from "../assets/mobile.png";
 import github from "../assets/github.png";
 import facebook from "../assets/facebook.png";
 
+const FORM_ENDPOINT = "https://formsubmit.co/ajax/nanovanofyrakinsis@gmail.com";
+
 function Contact() {
   const ref = useReveal();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
+  const [sending, setSending] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setStatus("✓ message envoyé ! je vous réponds rapidement.");
-    e.currentTarget.reset();
-    setTimeout(() => setStatus(""), 5000);
+    setSending(true);
+    setStatus("Envoi en cours...");
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _subject: "Nouveau message depuis le portfolio",
+          _template: "table",
+          _replyto: email,
+        }),
+      });
+      if (!res.ok) throw new Error("send failed");
+      setStatus("✓ message envoyé ! je vous réponds rapidement.");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch {
+      setStatus("✗ erreur lors de l'envoi. Réessayez.");
+    } finally {
+      setSending(false);
+      setTimeout(() => setStatus(""), 5000);
+    }
   }
 
   return (
@@ -30,7 +62,7 @@ function Contact() {
             Vous avez un projet ? Envoyez-moi un message, je réponds rapidement.
           </p>
           <div className="contact-item">
-            <span className="ci-icon"><img src={email} alt="icon email" /></span>
+            <span className="ci-icon"><img src={emailIcon} alt="icon email" /></span>
             <div>
               <small>email</small>
               <a href="mailto:nanovanofyrakinsis@gmail.com">nanovanofyrakinsis@gmail.com</a>
@@ -68,11 +100,25 @@ function Contact() {
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="form-field">
             <label htmlFor="cf-name">nom</label>
-            <input type="text" id="cf-name" placeholder="Votre nom" required />
+            <input
+              type="text"
+              id="cf-name"
+              placeholder="Votre nom"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
           </div>
           <div className="form-field">
             <label htmlFor="cf-email">email</label>
-            <input type="email" id="cf-email" placeholder="vous@exemple.com" required />
+            <input
+              type="email"
+              id="cf-email"
+              placeholder="vous@exemple.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="form-field">
             <label htmlFor="cf-msg">message</label>
@@ -80,11 +126,13 @@ function Contact() {
               id="cf-msg"
               rows="5"
               placeholder="Parlez-moi de votre projet..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
               required
             ></textarea>
           </div>
-          <button type="submit" className="btn btn-primary">
-            Envoyer
+          <button type="submit" className="btn btn-primary" disabled={sending}>
+            {sending ? "Envoi..." : "Envoyer"}
           </button>
           <p className="form-status">{status}</p>
         </form>

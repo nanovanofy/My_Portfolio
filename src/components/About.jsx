@@ -96,17 +96,17 @@ function About() {
             je cherche à développer des solutions innovantes tout en améliorant continuellement mes compétences.
           </p>
           <div className="about-chips">
-            <span>HTML5</span>
-            <span>CSS3</span>
-            <span>JavaScript</span>
-            <span>React</span>
-            <span>Boostrap</span>
-            <span>Git&Github</span>
-            <span>Express</span>
-            <span>Node.js</span>
-            <span>PHP</span>
-            <span>Python</span>
-            <span>MySQL & PostgreSQL</span>
+              <span>HTML5</span>
+              <span>CSS3</span>
+              <span>JavaScript</span>
+              <span>React</span>
+              <span>Boostrap</span>
+              <span>Git&Github</span>
+              <span>Express</span>
+              <span>Node.js</span>
+              <span>PHP</span>
+              <span>Python</span>
+              <span>MySQL & PostgreSQL</span>
           </div>
           <a href="#" className="btn btn-ghost btn-sm">
             Télécharger mon CV
