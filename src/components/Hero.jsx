@@ -11,7 +11,7 @@ function Hero() {
             <span className="glitch" data-text="Bonjour, je suis">
               Bonjour, je suis
             </span>
-            <span className="glitch name" data-text="Nanovanofy.">
+            <span className="glitch name" data-text="Nanovanofy Fabien">
               Nanovanofy Fabien
             </span>
           </h1>

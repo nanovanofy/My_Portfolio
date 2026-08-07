@@ -2,9 +2,9 @@ import { useEffect, useRef } from "react";
 import { flashGlitch, typeLine } from "../glitch";
 
 const BOOT_LINES = [
-  "> initialisation du portefolio...",
-  "> chargement du thème : opencode-terminal",
-  "> application de l'effet glitch...",
+  "> initialisation du portfolio...",
+  "> chargement des modules...",
+  "> configuration du système...",
   "> accès autorisé ✓",
 ];
 

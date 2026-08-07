@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTheme } from "../hooks/useTheme";
 
 const LINKS = [
   { href: "#about", label: "À propos" },
@@ -9,6 +10,7 @@ const LINKS = [
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const [theme, toggleTheme] = useTheme();
 
   return (
     <nav className="navbar">
@@ -23,6 +25,19 @@ function Navbar() {
             </a>
           </li>
         ))}
+        <li>
+          <button
+            className="theme-toggle"
+            onClick={() => {
+              toggleTheme();
+              setOpen(false);
+            }}
+            aria-label={theme === "dark" ? "Activer le mode jour" : "Activer le mode nuit"}
+            title={theme === "dark" ? "Mode jour" : "Mode nuit"}
+          >
+            {theme === "dark" ? "☀" : "☾"}
+          </button>
+        </li>
       </ul>
       <div
         className={`hamburger ${open ? "open" : ""}`}
