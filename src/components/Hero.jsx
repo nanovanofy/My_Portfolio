@@ -1,27 +1,27 @@
-import profileImg from "../assets/profile.jpg";
+import { usePortfolioData } from "../data/store";
 
 function Hero() {
+  const [data] = usePortfolioData();
+  const { hero } = data;
+
   return (
     <header id="home" className="hero">
       <div className="hero-grid"></div>
       <div className="hero-inner">
         <div className="hero-left">
-          
           <h1 className="glitch-title">
-            <span className="glitch" data-text="Bonjour, je suis">
-              Bonjour, je suis
+            <span className="glitch" data-text={hero.greeting}>
+              {hero.greeting}
             </span>
-            <span className="glitch name" data-text="Nanovanofy Fabien">
-              Nanovanofy Fabien
+            <span className="glitch name" data-text={hero.name}>
+              {hero.name}
             </span>
           </h1>
           <p className="hero-role">
-            Développeur Full-stack<span className="caret">_</span>
+            {hero.role}
+            <span className="caret">_</span>
           </p>
-          <p className="hero-desc">
-          J'aime transformer des idées en applications web modernes, 
-          sécurisées et intuitives grâce aux technologies du développement web.
-          </p>
+          <p className="hero-desc">{hero.desc}</p>
           <div className="hero-actions">
             <a href="#projects" className="btn btn-primary">
               Voir mes projets
@@ -29,13 +29,13 @@ function Hero() {
             <a href="#contact" className="btn btn-ghost">
               Me contacter
             </a>
-          </div>        
+          </div>
         </div>
 
         <div className="hero-right">
           <div className="avatar-frame">
             <div className="avatar-glow"></div>
-            <img src={profileImg} alt="Photo de profil" />
+            <img src={hero.profileImage} alt="Photo de profil" />
             <div className="avatar-corner tl"></div>
             <div className="avatar-corner tr"></div>
             <div className="avatar-corner bl"></div>

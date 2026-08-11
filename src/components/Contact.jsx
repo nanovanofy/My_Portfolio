@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { useReveal } from "../hooks/useReveal";
-import emailIcon from "../assets/email.png";
-import mobile from "../assets/mobile.png";
-import github from "../assets/github.png";
-import facebook from "../assets/facebook.png";
+import { usePortfolioData } from "../data/store";
 
 const FORM_ENDPOINT = "https://formsubmit.co/ajax/nanovanofyrakinsis@gmail.com";
 
 function Contact() {
   const ref = useReveal();
+  const [data] = usePortfolioData();
+  const { contact } = data;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
@@ -58,40 +57,46 @@ function Contact() {
       <div className="contact-grid">
         <div className="contact-info">
           <h3>Travaillons ensemble</h3>
-          <p>
-            Vous avez un projet ? Envoyez-moi un message, je réponds rapidement.
-          </p>
+          <p>Vous avez un projet ? Envoyez-moi un message, je réponds rapidement.</p>
           <div className="contact-item">
-            <span className="ci-icon"><img src={emailIcon} alt="icon email" /></span>
+            <span className="ci-icon">
+              <img src={contact.emailIcon} alt="icon email" />
+            </span>
             <div>
               <small>email</small>
-              <a href="mailto:nanovanofyrakinsis@gmail.com">nanovanofyrakinsis@gmail.com</a>
+              <a href={`mailto:${contact.email}`}>{contact.email}</a>
             </div>
           </div>
           <div className="contact-item">
-            <span className="ci-icon"><img src={github} alt="icon github" /></span>
+            <span className="ci-icon">
+              <img src={contact.githubIcon} alt="icon github" />
+            </span>
             <div>
               <small>github</small>
-              <a href="https://github.com/nanovanofy" target="_blank" rel="noreferrer">
-                github.com/nanovanofy
+              <a href={contact.github} target="_blank" rel="noreferrer">
+                {contact.github.replace(/^https?:\/\//, "")}
               </a>
             </div>
           </div>
           <div className="contact-item">
-            <span className="ci-icon"><img src={mobile} alt="icon phone" /></span>
+            <span className="ci-icon">
+              <img src={contact.mobileIcon} alt="icon phone" />
+            </span>
             <div>
               <small>Telephone</small>
               <a href="" target="_blank" rel="noreferrer">
-                +261387556687
+                {contact.phone}
               </a>
             </div>
           </div>
-           <div className="contact-item">
-            <span className="ci-icon"><img src={facebook} alt="icon fb" /></span>
+          <div className="contact-item">
+            <span className="ci-icon">
+              <img src={contact.facebookIcon} alt="icon fb" />
+            </span>
             <div>
               <small>Facebook</small>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer">
-                Nanovanofy Fabien 
+              <a href={contact.facebookUrl} target="_blank" rel="noreferrer">
+                {contact.facebookName}
               </a>
             </div>
           </div>

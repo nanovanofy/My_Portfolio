@@ -1,35 +1,13 @@
+import { useState } from "react";
 import { useReveal } from "../hooks/useReveal";
 import { flashGlitch } from "../glitch";
-
-const PROJECTS = [
-  {
-    bg: "linear-gradient(135deg,#0f0f13,#1a2e1a)",
-    code: "$ npm run portfolio",
-    ok: "✓ ready in 0.42s",
-    tags: ["HTML", "CSS", "JS"],
-    title: "Terminal Portfolio",
-    desc: "Portfolio interactif en style terminal avec commandes, historique et effets glitch.",
-  },
-  {
-    bg: "linear-gradient(135deg,#0f0f13,#16233a)",
-    code: "$ glitch-ui --init",
-    ok: "✓ 12 composants générés",
-    tags: ["CSS", "Library"],
-    title: "Glitch UI",
-    desc: "Mini-librairie d'effets glitch et animations réutilisables pour sites web.",
-  },
-  {
-    bg: "linear-gradient(135deg,#0f0f13,#2a1a3a)",
-    code: "$ task-cli list",
-    ok: "✓ 3 tâches terminées",
-    tags: ["Node.js", "CLI"],
-    title: "Task CLI",
-    desc: "Gestionnaire de tâches en ligne de commande avec stockage JSON et export.",
-  },
-];
+import { usePortfolioData } from "../data/store";
+import VideoModal from "./VideoModal";
 
 function Projects() {
   const ref = useReveal();
+  const [data] = usePortfolioData();
+  const [openVideo, setOpenVideo] = useState(null);
 
   return (
     <section id="projects" className="section reveal" ref={ref}>
@@ -39,32 +17,71 @@ function Projects() {
         <span className="section-line"></span>
       </div>
       <div className="projects-grid">
-        {PROJECTS.map((p) => (
+        {data.projects.map((p) => (
           <article
             className="project-card"
-            key={p.title}
+            key={p.id}
             onMouseEnter={() => flashGlitch(2, 55)}
           >
-            <div className="project-thumb" style={{ background: p.bg }}>
-              <div className="thumb-code">
-                {p.code}
-                <br />
-                <span className="thumb-ok">{p.ok}</span>
-              </div>
+            <div className="project-thumb">
+              {p.image ? (
+                <img className="project-img" src={p.image} alt={p.title} />
+              ) : (
+                <div className="thumb-code">
+                  {p.title}
+                  <br />
+                  <span className="thumb-ok">● en ligne</span>
+                </div>
+              )}
+              {p.video && (
+                <button
+                  className="project-play"
+                  onClick={() => setOpenVideo({ video: p.video, title: p.title })}
+                  aria-label={`Regarder la démo de ${p.title}`}
+                >
+                  ▶
+                </button>
+              )}
+              {(p.video || p.demoUrl) && (
+                <a
+                  className="project-live"
+                  href={!p.video && p.demoUrl ? p.demoUrl : undefined}
+                  target={!p.video && p.demoUrl ? "_blank" : undefined}
+                  rel="noreferrer"
+                  onClick={(e) => {
+                    if (p.video) {
+                      e.preventDefault();
+                      setOpenVideo({ video: p.video, title: p.title });
+                    }
+                  }}
+                  title={p.video ? "Regarder la démo vidéo" : "Voir la démo en direct"}
+                >
+                  <span className="live-dot"></span> live{p.video ? " ▶" : ""}
+                </a>
+              )}
             </div>
             <div className="project-body">
-              <div className="project-tags">
-                {p.tags.map((t) => (
-                  <span key={t}>{t}</span>
-                ))}
-              </div>
               <h3>{p.title}</h3>
               <p>{p.desc}</p>
               <div className="project-links">
-                <a href="#" target="_blank" rel="noreferrer">
-                  démo →
-                </a>
-                <a href="#" target="_blank" rel="noreferrer">
+                {p.video ? (
+                  <button
+                    className="link-btn"
+                    onClick={() => setOpenVideo({ video: p.video, title: p.title })}
+                  >
+                    démo ▶
+                  </button>
+                ) : (
+                  <a
+                    href={p.demoUrl || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={!p.demoUrl ? "is-disabled" : ""}
+                  >
+                    démo →
+                  </a>
+                )}
+                <a href={p.codeUrl || "#"} target="_blank" rel="noreferrer">
                   code ↗
                 </a>
               </div>
@@ -72,6 +89,13 @@ function Projects() {
           </article>
         ))}
       </div>
+      {openVideo && (
+        <VideoModal
+          video={openVideo.video}
+          title={openVideo.title}
+          onClose={() => setOpenVideo(null)}
+        />
+      )}
     </section>
   );
 }

@@ -15,7 +15,7 @@ function Navbar() {
   return (
     <nav className="navbar">
       <a href="#home" className="logo">
-        &gt;_ Yassal
+        &gt;_Yassal
       </a>
       <ul className={`nav-links ${open ? "open" : ""}`}>
         {LINKS.map((l) => (

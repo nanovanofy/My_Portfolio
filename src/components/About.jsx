@@ -1,51 +1,35 @@
 import { useReveal } from "../hooks/useReveal";
+import { usePortfolioData } from "../data/store";
 
-const LINES = [
-  [["c", "const"], [" ", "dev"], [" ", "= {"], [" ", ""]],
-  [
-    ["i", "  nom      : "],
-    ["s", '"Nanovanofy Fabien"'],
-    ["n", ","],
-  ],
-  [
-    ["i", "  role     : "],
-    ["s", '"Développeur Full-stack"'],
-    ["n", ","],
-  ],
-
-  [
-    ["i", "  stack    : ["],
-    ["s", '"HTML"'],
-    ["n", ","],
-    ["s", '"CSS"'],
-    ["n", ","],
-    ["s", '"Boostrap"'],
-    ["n", ", "],
-    ["s", '"JS"'],
-    ["n", ","],
-    ["s", '"React"'],
-  ],
-  [
-    ["n", ","],
-    ["s", '"Express"'],
-    ["n", ","],
-    ["s", '"Node.js"'],
-    ["n", ","],
-    ["s", '"PHP"'],
-    ["n", ","],
-    ["s", '"MySQL,PostgreSQL"'],
-    ["n", ","],
-    ["s", '"Python"'],
-    ["n", "]"],
-  ],
-  [
-    ["i", "  "],
-    ["a", "code"],
-    ["n", ": () => "],
-    ["s", '"clean & créatif"'],
-  ],
-  [["n", "};"]],
-];
+function buildLines(name, role, stack) {
+  return [
+    [["c", "const"], [" ", "dev"], [" ", "= {"], [" ", ""]],
+    [
+      ["i", "  nom      : "],
+      ["s", `"${name}"`],
+      ["n", ","],
+    ],
+    [
+      ["i", "  role     : "],
+      ["s", `"${role}"`],
+      ["n", ","],
+    ],
+    [
+      ["i", "  stack    : ["],
+      ...stack.flatMap((s, i) => [
+        ["s", `"${s}"`],
+        ["n", i === stack.length - 1 ? "" : ", "],
+      ]),
+    ],
+    [
+      ["i", "  "],
+      ["a", "code"],
+      ["n", ": () => "],
+      ["s", '"clean & créatif"'],
+    ],
+    [["n", "};"]],
+  ];
+}
 
 function CodeLine({ line }) {
   return (
@@ -65,6 +49,14 @@ function CodeLine({ line }) {
 
 function About() {
   const ref = useReveal();
+  const [data] = usePortfolioData();
+  const { hero, about } = data;
+  const lines = buildLines(
+    hero.name,
+    hero.role,
+    data.skills.map((s) => s.name)
+  );
+  const paragraphs = about.text.split(/\n+/).filter(Boolean);
 
   return (
     <section id="about" className="section reveal" ref={ref}>
@@ -81,7 +73,7 @@ function About() {
             <span></span>
           </div>
           <pre className="term-code">
-            {LINES.map((line, i) => (
+            {lines.map((line, i) => (
               <div key={i}>
                 <CodeLine line={line} />
               </div>
@@ -89,26 +81,20 @@ function About() {
           </pre>
         </div>
         <div className="about-text">
-          <p>
-            Étudiant en L2 Informatique à l'École de Management et d'Innovation Technologique (EMIT),
-            Université de Fianarantsoa, je suis passionné par le développement Full-Stack. 
-            Curieux, autonome et motivé, Toujours motivé à apprendre de nouvelles technologies, 
-            je cherche à développer des solutions innovantes tout en améliorant continuellement mes compétences.
-          </p>
+          {paragraphs.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
           <div className="about-chips">
-              <span>HTML5</span>
-              <span>CSS3</span>
-              <span>JavaScript</span>
-              <span>React</span>
-              <span>Boostrap</span>
-              <span>Git&Github</span>
-              <span>Express</span>
-              <span>Node.js</span>
-              <span>PHP</span>
-              <span>Python</span>
-              <span>MySQL & PostgreSQL</span>
+            {about.chips.map((chip) => (
+              <span key={chip}>{chip}</span>
+            ))}
           </div>
-          <a href="#" className="btn btn-ghost btn-sm">
+          <a
+            href={about.cvUrl || "#"}
+            className="btn btn-ghost btn-sm"
+            target={about.cvUrl ? "_blank" : undefined}
+            rel={about.cvUrl ? "noreferrer" : undefined}
+          >
             Télécharger mon CV
           </a>
         </div>
