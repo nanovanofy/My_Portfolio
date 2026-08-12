@@ -8,11 +8,15 @@ import { randomBytes } from "node:crypto";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 4000;
 
-const uploadsDir = path.join(__dirname, "uploads");
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, "uploads");
 if (!existsSync(uploadsDir)) mkdirSync(uploadsDir, { recursive: true });
 
 const app = express();
 app.use(express.json());
+
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true });
+});
 
 const UPLOAD_LIMIT = 20 * 1024 * 1024; // 20 Mo
 
