@@ -1,5 +1,8 @@
 import { useRef, useState } from "react";
+import { upload } from "@vercel/blob/client";
 import { usePortfolioData, uid } from "../data/store";
+
+const USE_BLOB = import.meta.env.VITE_BLOB_UPLOAD === "1";
 
 const EMPTY = {
   id: "",
@@ -15,7 +18,6 @@ const MAX_DIM = 1600;
 const JPEG_QUALITY = 0.82;
 const MAX_FILE_MB = 4;
 const MAX_VIDEO_MB = 15;
-
 function blobToDataURL(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -48,7 +50,15 @@ function resizeImage(file) {
   });
 }
 
-async function uploadToServer(file) {
+async function uploadToServer(file, fileName, contentType) {
+  if (USE_BLOB) {
+    const result = await upload(fileName || file.name || "file", file, {
+      access: "public",
+      contentType,
+      handleUploadUrl: "/api/upload",
+    });
+    return result.url;
+  }
   const fd = new FormData();
   fd.append("file", file);
   const res = await fetch("/api/upload", { method: "POST", body: fd });
@@ -104,7 +114,7 @@ function AdminProjects() {
     try {
       const blob = await resizeImage(file);
       try {
-        const serverUrl = await uploadToServer(blob);
+        const serverUrl = await uploadToServer(blob, file.name, blob.type);
         set("image", serverUrl);
       } catch {
         const dataUrl = await blobToDataURL(blob);
@@ -133,7 +143,7 @@ function AdminProjects() {
     setVideoError("");
     setUploadingVid(true);
     try {
-      const serverUrl = await uploadToServer(file);
+      const serverUrl = await uploadToServer(file, file.name, file.type);
       set("video", serverUrl);
     } catch {
       const dataUrl = await blobToDataURL(file);
@@ -180,7 +190,7 @@ function AdminProjects() {
       <h1 className="admin-title">Projets</h1>
       <p className="admin-sub">
         Les projets sont affichés dans la section « Projets » du portfolio. Les images et vidéos
-        sont envoyées au serveur (« /uploads »).
+        sont stockées en ligne (Vercel Blob) ou sur le serveur local pendant le développement.
       </p>
 
       <div className="admin-grid">
@@ -268,8 +278,8 @@ function AdminProjects() {
             </button>
             {videoError && <small className="admin-error">{videoError}</small>}
             <small className="admin-hint">
-              {MAX_VIDEO_MB} Mo max (20 Mo côté serveur), mp4/webm/ogg. La vidéo est envoyée au
-              serveur et joue dans une fenêtre quand on clique sur « live ».
+              {MAX_VIDEO_MB} Mo max, mp4/webm/ogg. La vidéo est envoyée vers le stockage en ligne et
+              joue dans une fenêtre quand on clique sur « live ».
             </small>
             {hasVideo && (
               <div className="admin-upload-preview admin-video-preview">
