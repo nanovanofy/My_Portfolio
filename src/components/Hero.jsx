@@ -1,11 +1,41 @@
+import { useEffect, useRef } from "react";
 import { usePortfolioData } from "../data/store";
 
 function Hero() {
   const [data] = usePortfolioData();
   const { hero } = data;
+  const heroRef = useRef(null);
+  const frameRef = useRef(null);
+
+  useEffect(() => {
+    const hero = heroRef.current;
+    const frame = frameRef.current;
+    if (!hero || !frame) return;
+    const MAX = 14;
+
+    function onMove(e) {
+      const rect = frame.getBoundingClientRect();
+      const relX = (e.clientX - rect.left) / rect.width;
+      const relY = (e.clientY - rect.top) / rect.height;
+      frame.style.transform = `perspective(700px) rotateX(${
+        -(relY - 0.5) * MAX
+      }deg) rotateY(${(relX - 0.5) * MAX}deg)`;
+    }
+
+    function onLeave() {
+      frame.style.transform = "rotateX(0deg) rotateY(0deg)";
+    }
+
+    hero.addEventListener("mousemove", onMove);
+    hero.addEventListener("mouseleave", onLeave);
+    return () => {
+      hero.removeEventListener("mousemove", onMove);
+      hero.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
 
   return (
-    <header id="home" className="hero">
+    <header id="home" className="hero" ref={heroRef}>
       <div className="hero-grid"></div>
       <div className="hero-inner">
         <div className="hero-left">
@@ -33,7 +63,7 @@ function Hero() {
         </div>
 
         <div className="hero-right">
-          <div className="avatar-frame">
+          <div className="avatar-frame" ref={frameRef}>
             <div className="avatar-glow"></div>
             <img src={hero.profileImage} alt="Photo de profil" />
             <div className="avatar-corner tl"></div>
