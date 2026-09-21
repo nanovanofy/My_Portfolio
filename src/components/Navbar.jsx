@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../hooks/useTheme";
 
 const LINKS = [
@@ -10,12 +10,24 @@ const LINKS = [
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [theme, toggleTheme] = useTheme();
+
+  useEffect(() => {
+    function onScroll() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? (window.scrollY / max) * 100 : 0);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <nav className="navbar">
+      <div className="scroll-progress" style={{ width: `${progress}%` }} />
       <a href="#home" className="logo">
-        &gt;_Yassal
+        &gt;_YR
       </a>
       <ul className={`nav-links ${open ? "open" : ""}`}>
         {LINKS.map((l) => (
