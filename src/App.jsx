@@ -14,7 +14,6 @@ import AdminSkills from "./admin/AdminSkills";
 import AdminAbout from "./admin/AdminAbout";
 import AdminHero from "./admin/AdminHero";
 import AdminContact from "./admin/AdminContact";
-import { flashGlitch } from "./glitch";
 import { useHashRoute, isAdminRoute } from "./router";
 
 function AdminApp({ path }) {
@@ -40,19 +39,6 @@ function Site() {
   useEffect(() => {
     document.body.classList.add("lock");
     return () => document.body.classList.remove("lock");
-  }, []);
-
-  useEffect(() => {
-    let last = 0;
-    function onScroll() {
-      const now = Date.now();
-      if (now - last > 700 && Math.random() < 0.18) {
-        last = now;
-        flashGlitch(3, 60);
-      }
-    }
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (

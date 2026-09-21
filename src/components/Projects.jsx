@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useReveal } from "../hooks/useReveal";
-import { flashGlitch } from "../glitch";
 import { usePortfolioData } from "../data/store";
 import VideoModal from "./VideoModal";
 
@@ -21,7 +20,6 @@ function Projects() {
           <article
             className="project-card"
             key={p.id}
-            onMouseEnter={() => flashGlitch(2, 55)}
           >
             <div className="project-thumb">
               {p.image ? (
