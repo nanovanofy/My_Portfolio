@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import BootOverlay from "./components/BootOverlay";
 import GlitchCanvas from "./components/GlitchCanvas";
+import MatrixCanvas from "./components/MatrixCanvas";
+import CursorFollower from "./components/CursorFollower";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -46,6 +48,8 @@ function Site() {
       {!booted && <BootOverlay onDone={handleBootDone} />}
       <GlitchCanvas />
       <div className="scanlines"></div>
+      {booted && <MatrixCanvas />}
+      <CursorFollower />
 
       <Navbar />
       <Hero />
